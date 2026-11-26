@@ -1,0 +1,20 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <!-- Use the same .NET version as your Library System (net8.0 / net9.0 / net10.0 all work). -->
+    <TargetFramework>net8.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <RootNamespace>Portfolio</RootNamespace>
+    <AssemblyName>portfolio</AssemblyName>
+    <!-- Lets `dotnet user-secrets` keep the DB password and editor password OUT of GitHub. -->
+    <UserSecretsId>portfolio-3b2f6a10-8c45-4d7e-9e12-6a5d0c4b7e88</UserSecretsId>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <!-- Raw ADO.NET driver for PostgreSQL: no Entity Framework, so every SQL statement,
+         transaction and SQLSTATE code is visible in the Repository classes. -->
+    <PackageReference Include="Npgsql" Version="8.0.3" />
+  </ItemGroup>
+
+</Project>

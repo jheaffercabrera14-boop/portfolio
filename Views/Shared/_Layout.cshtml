@@ -1,0 +1,71 @@
+@inject IConfiguration Config
+@{
+    // Editor controllers are named EditorXxx: they get the orange "Editor mode" look and navigation.
+    var controller = (ViewContext.RouteData.Values["controller"] as string) ?? "";
+    var isEditor = controller.StartsWith("Editor");
+    var signedIn = User.Identity?.IsAuthenticated == true;
+    var owner = Config["Portfolio:OwnerName"] ?? "Portfolio";
+}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>@ViewData["Title"] - @owner</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&family=Syne:wght@400..800&display=swap" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+</head>
+<body class="@(isEditor ? "is-editor" : "is-viewer")">
+    @if (isEditor)
+    {
+        <div class="mode-banner">EDITOR MODE &mdash; changes here are saved to the database</div>
+    }
+    <header class="header">
+        <nav class="nav container">
+            <a class="nav__logo" asp-controller="Home" asp-action="Index">@owner<span>.</span></a>
+            <div class="nav__links">
+                @if (isEditor)
+                {
+                    <a asp-controller="Editor" asp-action="Index">Dashboard</a>
+                    <a asp-controller="EditorCourses" asp-action="Create">+ Course</a>
+                    <a asp-controller="EditorProjects" asp-action="Create">+ Project</a>
+                }
+                else
+                {
+                    <a asp-controller="Home" asp-action="Index" asp-fragment="courses">Courses</a>
+                    <a asp-controller="Home" asp-action="Index" asp-fragment="projects">Projects</a>
+                }
+            </div>
+            <div class="nav__right">
+                @* The link that switches between the two sides *@
+                @if (isEditor)
+                {
+                    <a class="mode-switch" asp-controller="Home" asp-action="Index">&#128065; Viewer mode</a>
+                }
+                else
+                {
+                    <a class="mode-switch" asp-controller="Editor" asp-action="Index">&#9998; Editor mode</a>
+                }
+                @if (signedIn)
+                {
+                    <form asp-controller="Account" asp-action="Logout" method="post" class="inline">
+                        <button class="link-btn" type="submit">Sign out</button>
+                    </form>
+                }
+            </div>
+        </nav>
+    </header>
+
+    <main class="main container">
+        <partial name="_Alerts" />
+        @RenderBody()
+    </main>
+
+    <footer class="footer container">
+        <span>&copy; @DateTime.Now.Year @owner</span>
+        <span>ASP.NET Core MVC &middot; PostgreSQL (Supabase)</span>
+    </footer>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+</body>
+</html>

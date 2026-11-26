@@ -1,0 +1,44 @@
+@model ProjectDetailsViewModel
+@{
+    var p = Model.Project;
+    ViewData["Title"] = p.Title;
+
+    // Annex: turn a YouTube link into the address of an embeddable player.
+    var videoId = System.Text.RegularExpressions.Regex.Match(p.VideoUrl ?? "", @"(?:v=|youtu\.be/|shorts/)([A-Za-z0-9_-]{11})").Groups[1].Value;
+}
+<a class="back" asp-controller="Courses" asp-action="Details" asp-route-id="@p.CourseId">&larr; @p.CourseCode &middot; @p.CourseTitle</a>
+<section class="detail-head">
+    <span class="badge">@p.CourseCode</span>
+    <h1>@p.Title</h1>
+    <p class="muted">@p.CompletedYear@(string.IsNullOrEmpty(p.TechStack) ? "" : " · " + p.TechStack)</p>
+    @if (!string.IsNullOrEmpty(p.Description)) { <p class="lead">@p.Description</p> }
+    <div class="actions">
+        @if (!string.IsNullOrEmpty(p.ProjectUrl))
+        {
+            <a class="btn" href="@p.ProjectUrl" target="_blank" rel="noopener noreferrer">Open project / demo &#8599;</a>
+        }
+        @if (!string.IsNullOrEmpty(p.VideoUrl))
+        {
+            <a class="btn btn--ghost" href="@p.VideoUrl" target="_blank" rel="noopener noreferrer">Watch on YouTube &#8599;</a>
+        }
+    </div>
+</section>
+
+@if (videoId != "")
+{
+    <h2 class="section__title">Project <span>video</span></h2>
+    <div class="video">
+        <iframe width="560" height="315" src="https://www.youtube.com/embed/@videoId" title="Project demo" allowfullscreen></iframe>
+    </div>
+}
+
+<h2 class="section__title">Project <span>images</span></h2>
+@if (Model.Images.Count == 0) { <p class="empty">No images for this project.</p> }
+<div class="grid gallery">
+    @foreach (var img in Model.Images)
+    {
+        <a href="@img.ImageUrl" target="_blank" rel="noopener noreferrer" class="gallery__item">
+            <img src="@img.ImageUrl" alt="@p.Title image @img.SortOrder" loading="lazy" onerror="this.alt='Image could not be loaded: check that the URL is public'" />
+        </a>
+    }
+</div>

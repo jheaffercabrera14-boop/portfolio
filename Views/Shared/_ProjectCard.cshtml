@@ -1,0 +1,22 @@
+@model Project
+<a class="card" asp-controller="Projects" asp-action="Details" asp-route-id="@Model.ProjectId"
+   data-course="@Model.CourseId"
+   data-text="@((Model.Title + " " + Model.TechStack + " " + Model.CourseCode + " " + Model.CourseTitle).ToLowerInvariant())">
+    @if (!string.IsNullOrEmpty(Model.CoverImageUrl))
+    {
+        <img class="card__img" src="@Model.CoverImageUrl" alt="@Model.Title" loading="lazy" onerror="this.style.display='none'" />
+    }
+    else
+    {
+        <div class="card__img card__img--empty">@Model.CourseCode</div>
+    }
+    <div class="card__body">
+        <div class="card__meta"><span class="badge">@Model.CourseCode</span><span>@Model.CompletedYear</span></div>
+        <h3 class="card__title">@Model.Title</h3>
+        @if (!string.IsNullOrEmpty(Model.TechStack))
+        {
+            <p class="card__text">@Model.TechStack</p>
+        }
+        <span class="card__more">@Model.ImageCount image(s)@(string.IsNullOrEmpty(Model.VideoUrl) ? "" : " · video") &rarr;</span>
+    </div>
+</a>

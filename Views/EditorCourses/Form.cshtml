@@ -1,0 +1,55 @@
+@model CourseFormViewModel
+@{
+    var isNew = Model.CourseId == 0;
+    ViewData["Title"] = isNew ? "Add course" : "Edit course";
+    var action = isNew ? "Create" : "Edit";
+    int? routeId = isNew ? null : Model.CourseId;
+}
+<section class="form-card">
+    <h1>@(isNew ? "Add" : "Edit") <span class="accent">course</span></h1>
+    <form asp-controller="EditorCourses" asp-action="@action" asp-route-id="@routeId" method="post">
+        <div asp-validation-summary="ModelOnly" class="alert alert--error"></div>
+
+        <div class="field">
+            <label asp-for="CourseCode"></label>
+            <input asp-for="CourseCode" class="input" required maxlength="12"
+                   pattern="@Patterns.CourseCode" title="2-8 CAPITAL letters then 1-4 digits, e.g. DBMWEB1"
+                   oninput="this.value = this.value.toUpperCase()" placeholder="DBMWEB1" />
+            <span asp-validation-for="CourseCode" class="field-error"></span>
+            <small>Unique. 2-8 capital letters, then 1-4 digits, no spaces.</small>
+        </div>
+        <div class="field">
+            <label asp-for="CourseTitle"></label>
+            <input asp-for="CourseTitle" class="input" required maxlength="120" />
+            <span asp-validation-for="CourseTitle" class="field-error"></span>
+        </div>
+        <div class="field">
+            <label asp-for="Description"></label>
+            <textarea asp-for="Description" class="input" rows="3" maxlength="500"></textarea>
+            <span asp-validation-for="Description" class="field-error"></span>
+        </div>
+        <div class="field-row">
+            <div class="field">
+                <label asp-for="Units"></label>
+                <input asp-for="Units" type="number" class="input" required min="1" max="6" step="1" />
+                <span asp-validation-for="Units" class="field-error"></span>
+            </div>
+            <div class="field">
+                <label asp-for="AcademicTerm"></label>
+                <input asp-for="AcademicTerm" class="input" maxlength="30" placeholder="1st Sem 2026-2027" />
+                <span asp-validation-for="AcademicTerm" class="field-error"></span>
+            </div>
+        </div>
+        <div class="field">
+            <label asp-for="ImageUrl"></label>
+            <input asp-for="ImageUrl" class="input" maxlength="500" pattern="@Patterns.WebUrl"
+                   title="A full http:// or https:// URL" placeholder="https://..." />
+            <span asp-validation-for="ImageUrl" class="field-error"></span>
+            <small>Optional. A PUBLIC image link (Supabase Storage or GitHub), not Google Drive / Facebook / OneDrive.</small>
+        </div>
+        <div class="actions">
+            <button class="btn" type="submit">Save course</button>
+            <a class="btn btn--ghost" asp-controller="Editor" asp-action="Index">Cancel</a>
+        </div>
+    </form>
+</section>

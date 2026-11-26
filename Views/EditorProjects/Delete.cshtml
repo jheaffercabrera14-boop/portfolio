@@ -1,0 +1,14 @@
+@model Project
+@{
+    ViewData["Title"] = "Delete project";
+}
+<section class="form-card narrow">
+    <h1>Delete <span class="accent">project</span>?</h1>
+    <div asp-validation-summary="ModelOnly" class="alert alert--error"></div>
+    <p><span class="badge">@Model.CourseCode</span> <strong>@Model.Title</strong></p>
+    <p class="muted">Its @Model.ImageCount image link(s) will be deleted with it.</p>
+    <form asp-controller="EditorProjects" asp-action="DeleteConfirmed" asp-route-id="@Model.ProjectId" method="post" class="actions">
+        <button class="btn btn--danger" type="submit">Yes, delete</button>
+        <a class="btn btn--ghost" asp-controller="Editor" asp-action="Index">Cancel</a>
+    </form>
+</section>

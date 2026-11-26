@@ -1,0 +1,17 @@
+@model CourseDetailsViewModel
+@{
+    ViewData["Title"] = Model.Course.CourseCode;
+    var c = Model.Course;
+}
+<a class="back" asp-controller="Home" asp-action="Index" asp-fragment="courses">&larr; All courses</a>
+<section class="detail-head">
+    <span class="badge">@c.CourseCode</span>
+    <h1>@c.CourseTitle</h1>
+    <p class="muted">@c.Units unit(s)@(string.IsNullOrEmpty(c.AcademicTerm) ? "" : " · " + c.AcademicTerm)</p>
+    @if (!string.IsNullOrEmpty(c.Description)) { <p class="lead">@c.Description</p> }
+</section>
+<h2 class="section__title">Projects in <span>@c.CourseCode</span></h2>
+@if (Model.Projects.Count == 0) { <p class="empty">No projects for this course yet.</p> }
+<div class="grid cards">
+    @foreach (var p in Model.Projects) { <partial name="_ProjectCard" model="p" /> }
+</div>

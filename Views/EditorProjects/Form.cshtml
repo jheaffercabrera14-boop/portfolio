@@ -1,0 +1,94 @@
+@model ProjectFormViewModel
+@{
+    var isNew = Model.ProjectId == 0;
+    ViewData["Title"] = isNew ? "Add project" : "Edit project";
+    var action = isNew ? "Create" : "Edit";
+    int? routeId = isNew ? null : Model.ProjectId;
+}
+<section class="form-card">
+    <h1>@(isNew ? "Add" : "Edit") <span class="accent">project</span></h1>
+    <form asp-controller="EditorProjects" asp-action="@action" asp-route-id="@routeId" method="post">
+        <div asp-validation-summary="ModelOnly" class="alert alert--error"></div>
+        <input type="hidden" asp-for="ProjectId" />
+
+        <div class="field">
+            <label asp-for="CourseId"></label>
+            <select asp-for="CourseId" asp-items="Model.CourseOptions" class="input" required>
+                <option value="">&mdash; choose a course &mdash;</option>
+            </select>
+            <span asp-validation-for="CourseId" class="field-error"></span>
+        </div>
+        <div class="field">
+            <label asp-for="Title"></label>
+            <input asp-for="Title" class="input" required maxlength="120" />
+            <span asp-validation-for="Title" class="field-error"></span>
+        </div>
+        <div class="field">
+            <label asp-for="Description"></label>
+            <textarea asp-for="Description" class="input" rows="4" maxlength="1000"></textarea>
+            <span asp-validation-for="Description" class="field-error"></span>
+        </div>
+        <div class="field-row">
+            <div class="field">
+                <label asp-for="TechStack"></label>
+                <input asp-for="TechStack" class="input" maxlength="200" />
+                <span asp-validation-for="TechStack" class="field-error"></span>
+            </div>
+            <div class="field">
+                <label asp-for="CompletedYear"></label>
+                <input asp-for="CompletedYear" type="number" class="input" required min="2000" max="2100" step="1" />
+                <span asp-validation-for="CompletedYear" class="field-error"></span>
+            </div>
+        </div>
+        <div class="field">
+            <label asp-for="ProjectUrl"></label>
+            <input asp-for="ProjectUrl" class="input" maxlength="300" pattern="@Patterns.WebUrl"
+                   title="A full http:// or https:// URL" placeholder="https://github.com/you/repo" />
+            <span asp-validation-for="ProjectUrl" class="field-error"></span>
+        </div>
+        <div class="field">
+            <label asp-for="VideoUrl"></label>
+            <input asp-for="VideoUrl" class="input" maxlength="300" pattern="@Patterns.VideoUrl"
+                   title="youtube.com/watch?v=ID, youtu.be/ID or youtube.com/shorts/ID (11-character ID)"
+                   placeholder="https://www.youtube.com/watch?v=XXXXXXXXXXX" />
+            <span asp-validation-for="VideoUrl" class="field-error"></span>
+        </div>
+        <div class="field">
+            <label asp-for="ImageUrlsText"></label>
+            <textarea asp-for="ImageUrlsText" class="input mono" rows="7" data-image-lines data-pattern="@Patterns.ImageUrl"
+                      placeholder="https://.../screenshot-1.png&#10;https://.../screenshot-2.png"></textarea>
+            <span asp-validation-for="ImageUrlsText" class="field-error"></span>
+            <span class="field-error js-line-errors"></span>
+            <small>One public http(s) URL per line. All images and the project are saved together: if one line fails, nothing is saved.</small>
+        </div>
+        <div class="actions">
+            <button class="btn" type="submit">Save project</button>
+            <a class="btn btn--ghost" asp-controller="Editor" asp-action="Index">Cancel</a>
+        </div>
+    </form>
+
+    @if (!isNew)
+    {
+        <hr />
+        <h2>Images saved in the database (@Model.ExistingImages.Count)</h2>
+        <p class="muted">Use these to fix a single image without touching the others.</p>
+        @if (Model.ExistingImages.Count == 0) { <p class="empty">No images yet.</p> }
+        <ul class="image-list">
+            @foreach (var img in Model.ExistingImages)
+            {
+                <li>
+                    <img src="@img.ImageUrl" alt="image @img.SortOrder" loading="lazy" onerror="this.style.visibility='hidden'" />
+                    <span class="image-list__url">@img.SortOrder. @img.ImageUrl</span>
+                    <span class="row-actions">
+                        <a asp-controller="EditorImages" asp-action="Edit" asp-route-id="@img.ImageId">Edit</a>
+                        <form asp-controller="EditorImages" asp-action="Delete" asp-route-id="@img.ImageId" method="post" class="inline"
+                              onsubmit="return confirm('Delete this image?');">
+                            <button class="link-btn danger" type="submit">Delete</button>
+                        </form>
+                    </span>
+                </li>
+            }
+        </ul>
+        <a class="btn btn--small btn--ghost" asp-controller="EditorImages" asp-action="Create" asp-route-projectId="@Model.ProjectId">+ Add one image</a>
+    }
+</section>

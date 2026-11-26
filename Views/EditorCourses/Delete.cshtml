@@ -1,0 +1,14 @@
+@model Course
+@{
+    ViewData["Title"] = "Delete course";
+}
+<section class="form-card narrow">
+    <h1>Delete <span class="accent">course</span>?</h1>
+    <div asp-validation-summary="ModelOnly" class="alert alert--error"></div>
+    <p><span class="badge">@Model.CourseCode</span> <strong>@Model.CourseTitle</strong></p>
+    <p class="muted">This course has @Model.ProjectCount project(s). The database refuses to delete a course that still has projects.</p>
+    <form asp-controller="EditorCourses" asp-action="DeleteConfirmed" asp-route-id="@Model.CourseId" method="post" class="actions">
+        <button class="btn btn--danger" type="submit">Yes, delete</button>
+        <a class="btn btn--ghost" asp-controller="Editor" asp-action="Index">Cancel</a>
+    </form>
+</section>

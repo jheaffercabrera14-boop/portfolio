@@ -1,0 +1,25 @@
+@model ImageFormViewModel
+@{
+    var isNew = Model.ImageId == 0;
+    ViewData["Title"] = isNew ? "Add image" : "Edit image";
+    var action = isNew ? "Create" : "Edit";
+    int? routeId = isNew ? null : Model.ImageId;
+}
+<section class="form-card narrow">
+    <h1>@(isNew ? "Add" : "Edit") <span class="accent">image</span></h1>
+    <p class="muted">Project: <strong>@Model.ProjectTitle</strong></p>
+    <form asp-controller="EditorImages" asp-action="@action" asp-route-id="@routeId" method="post">
+        <div asp-validation-summary="ModelOnly" class="alert alert--error"></div>
+        <input type="hidden" asp-for="ProjectId" />
+        <div class="field">
+            <label asp-for="ImageUrl"></label>
+            <input asp-for="ImageUrl" class="input" required maxlength="500" pattern="@Patterns.ImageUrl"
+                   title="A full http:// or https:// URL" placeholder="https://..." />
+            <span asp-validation-for="ImageUrl" class="field-error"></span>
+        </div>
+        <div class="actions">
+            <button class="btn" type="submit">Save image</button>
+            <a class="btn btn--ghost" asp-controller="EditorProjects" asp-action="Edit" asp-route-id="@Model.ProjectId">Cancel</a>
+        </div>
+    </form>
+</section>
